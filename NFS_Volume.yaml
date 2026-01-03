@@ -1,0 +1,29 @@
+- name: Create NFS volume
+  na_ontap_volume:
+    state: present
+    name: vol_nfs_app
+    vserver: svm1
+    aggregate_name: aggr1
+    size: 200
+    size_unit: gb
+
+- name: Create export policy
+  na_ontap_export_policy:
+    state: present
+    name: nfs_policy
+    vserver: svm1
+
+- name: Add export rule
+  na_ontap_export_policy_rule:
+    state: present
+    policy_name: nfs_policy
+    vserver: svm1
+    client_match: 10.0.0.0/24
+    ro_rule: sys
+    rw_rule: sys
+
+- name: Apply export policy
+  na_ontap_volume:
+    name: vol_nfs_app
+    vserver: svm1
+    export_policy: nfs_policy
